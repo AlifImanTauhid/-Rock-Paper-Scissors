@@ -1,69 +1,58 @@
 // Computer Choices
 function getComputerChoice() {
-    const computerChoice = Math.random();
-    if (computerChoice < 0.34) {
-        return 'rock';
-    } else if (computerChoice > 0.34 && computerChoice < 0.67) {
-        return 'paper';
-    } else {
-        return 'scissors';
-    }
+    const computerChoices = Math.random();
+    if (computerChoices < 0.34) return 'rock';
+    if (computerChoices > 0.34 && computerChoices < 0.67) return 'paper';
+    return 'scissors';
 }
 
-// Human Choice
-function getHumanChoice() {
-    const choice = prompt('Rock, Paper , Scissors?').toLowerCase();
-    if (choice === 'rock') {
-        return 'rock';
-    } else if (choice === 'paper') {
-        return 'paper';
-    } else if (choice === 'scissors') {
-        return 'scissors';
-    } else if (choice === null || choice === "") {
-        return alert('Please choose the options!')
-    }
-}
-
+// Score
 let humanScore = 0;
-let computerScore = 0;
+let compScore = 0;
 
-function playGame() {
-    // Play Function
-    function playRound(humanChoice, computerChoice) {
-        if (
-            (humanChoice === "rock" && computerChoice === "scissors") ||
-            (humanChoice === "scissors" && computerChoice === "paper") ||
-            (humanChoice === "paper" && computerChoice === "rock")
-        ) {
-            alert(`you choose ${humanChoice} and computer choose ${computerChoice}. YOU WIN!!`);
-            humanScore++;
-        } else if (humanChoice === computerChoice) {
-            alert("IT'S A TIE!");
-        } else if (
-            (humanChoice === "scissors" && computerChoice === "rock") ||
-            (humanChoice === "paper" && computerChoice === "scissors") ||
-            (humanChoice === "rock" && computerChoice === "paper")
-        ) {
-            alert(`you choose ${humanChoice} and computer choose ${computerChoice}. YOU LOSE!!`);
-            computerScore++;
+// Play Function
+function playRound(human, comp) {
+    if (human == comp) return "it's a tie!";
+    if (human == 'rock') return (comp == 'paper') ? 'Lose' : 'Win';
+    if (human == 'paper') return (comp == 'rock') ? 'Win' : 'Lose';
+    if (human == 'scissors') return (comp == 'rock') ? 'Lose' : 'Win';
+}
+
+const button = document.querySelectorAll('.btn');
+button.forEach(e => {
+    e.addEventListener("click", () => {
+        const _human = e.className.split(' ').pop();
+        const _comp = getComputerChoice();
+        const result = playRound(_human, _comp);
+        // result
+        alert(`You choose ${_human.toUpperCase()} and Computer Choose ${_comp.toUpperCase()}`)
+        const display = document.querySelector('.result');
+        display.textContent = result.toUpperCase();
+        //score
+        const hScore = document.querySelector('.hScore');
+        const cScore = document.querySelector('.cScore');
+        // scoring logic
+        if (result == 'Win') {
+            hScore.innerHTML = ++humanScore;
+            if (humanScore == 5) {
+                setTimeout(() => {
+                    if (humanScore > compScore) {
+                        alert(`Your score is ${humanScore} and Computer score is ${compScore}. YOUR WIN!!!`);
+                        location.reload();
+                    }
+                }, 1300);
+            }
         }
-
-        alert(`your score is ${humanScore} and computer score is ${computerScore}`)
-    }
-
-    const humanSelection = getHumanChoice();
-    const ComputerSelection = getComputerChoice();
-
-    playRound(humanSelection, ComputerSelection);
-
-}
-
-for (let i = 0; i < 5; i++) {
-    playGame();
-}
-
-if (humanScore > computerScore) {
-    alert(`Your score : ${humanScore} and Computer score : ${computerScore} YOU WIN!!!`)
-} else {
-    alert(`Your score : ${humanScore} and Computer score : ${computerScore} YOU LOSE!!!`)
-}
+        if (result == 'Lose') {
+            cScore.innerHTML = ++compScore;
+            if (compScore == 5) {
+                setTimeout(() => {
+                    if (compScore > humanScore) {
+                        alert(`Your score is ${humanScore} and Computer score is ${compScore}. COMPUTER WIN!!!`)
+                        location.reload();
+                    }
+                }, 1300);
+            }
+        }
+    })
+});
